@@ -1,9 +1,31 @@
 import express, { NextFunction, Request, Response } from "express";
-import logger from "./config/logger";
 import createHttpError, { HttpError } from "http-errors";
+import cors from "cors";
+import helmet from "helmet";
+import compression from "compression";
+import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
+import hpp from "hpp";
+import morgan from "morgan";
+import csrf from "csurf";
+import sanitize from "express-mongo-sanitize";
+import logger from "./config/logger";
 
 // Initialize Express app
 const app = express();
+
+app.use(express.json());
+
+// All security related middlewares
+app.use(cors());
+app.use(helmet());
+app.use(compression());
+app.use(cookieParser());
+app.use(csrf({ cookie: true }));
+app.use(hpp());
+app.use(morgan("combined"));
+app.use(sanitize());
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Welcome to take-home-challenge site");
