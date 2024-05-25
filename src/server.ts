@@ -1,21 +1,22 @@
-import express from "express";
+import app from "./app";
 import env from "./config/dotenv";
-
-// Initialize Express app
-const app = express();
+import logger from "./config/logger";
 
 const startServer = () => {
     const PORT = env.PORT || 8000;
 
     try {
+        // throw new Error("Something wents wrong");
         app.listen(PORT, () => {
-            // eslint-disable-next-line no-console
-            console.log(`server is running on port ${PORT}..`);
+            logger.info(`server is running on port ${PORT}..`);
         });
     } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-        process.exit(1);
+        if (error instanceof Error) {
+            logger.error(error.message);
+            setTimeout(() => {
+                process.exit(1);
+            }, 1000);
+        }
     }
 };
 

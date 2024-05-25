@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-import { cleanEnv, port } from "envalid";
+import { cleanEnv, port, str } from "envalid";
 import path from "path";
 
 config({
@@ -8,6 +8,7 @@ config({
 
 export const env = cleanEnv(process.env, {
     PORT: port(),
+    NODE_ENV: str({ default: "dev", choices: ["test", "prod", "dev"] }),
 });
 
 export default env;
