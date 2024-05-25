@@ -6,7 +6,6 @@ const startServer = () => {
     const PORT = env.PORT || 8000;
 
     try {
-        // throw new Error("Something wents wrong");
         app.listen(PORT, () => {
             logger.info(`server is running on port ${PORT}..`);
         });
