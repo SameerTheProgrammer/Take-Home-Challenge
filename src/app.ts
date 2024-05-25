@@ -22,7 +22,7 @@ app.get("/error", async (req: Request, res: Response, next: NextFunction) => {
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof Error) {
         logger.error(err.message);
-        const statusCode = err.statusCode || 500;
+        const statusCode = err.statusCode || err.status || 500;
 
         res.status(statusCode).json({
             error: [
