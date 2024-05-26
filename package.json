@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "nodemon src/server.ts",
+        "build": "tsc",
+        "dev": "cross-env NODE_ENV=dev nodemon src/server.ts",
         "format:check": "prettier . --check",
         "format:fix": "prettier . --write",
         "lint": "eslint .",
@@ -42,6 +42,7 @@
         "@types/node": "^20.12.12",
         "@typescript-eslint/eslint-plugin": "^7.10.0",
         "@typescript-eslint/parser": "^7.10.0",
+        "cross-env": "^7.0.3",
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
         "husky": "^9.0.11",
