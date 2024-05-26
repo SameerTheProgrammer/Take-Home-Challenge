@@ -1,7 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import createHttpError, { HttpError } from "http-errors";
 import cors from "cors";
-import helmet from "helmet";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
@@ -18,8 +17,6 @@ app.use(express.json());
 
 // All security related middlewares
 app.use(cors());
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
 app.use(csrf({ cookie: true }));
