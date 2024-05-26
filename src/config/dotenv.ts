@@ -9,6 +9,11 @@ config({
 export const env = cleanEnv(process.env, {
     PORT: port(),
     NODE_ENV: str({ default: "dev", choices: ["test", "prod", "dev"] }),
+    DB_HOST: str(),
+    DB_PORT: port(),
+    DB_USERNAME: str(),
+    DB_PASSWORD: str(),
+    DB_NAME: str(),
 });
 
 export default env;

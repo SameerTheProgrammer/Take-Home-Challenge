@@ -18,6 +18,7 @@ app.use(express.json());
 
 // All security related middlewares
 app.use(cors());
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
