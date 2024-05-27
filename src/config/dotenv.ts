@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-import { cleanEnv, port, str } from "envalid";
+import { cleanEnv, num, port, str } from "envalid";
 import path from "path";
 
 config({
@@ -14,6 +14,9 @@ export const env = cleanEnv(process.env, {
     DB_USERNAME: str(),
     DB_PASSWORD: str(),
     DB_NAME: str(),
+    JWT_SECRET: str(),
+    JWT_TOKEN_EXPIRY_DAYS: str(),
+    COOKIE_MAXAGE_DAYS: num(),
 });
 
 export default env;

@@ -6,6 +6,8 @@ import createHttpError from "http-errors";
 import logger from "../config/logger";
 import bcrypt from "bcryptjs";
 import { validationResult } from "express-validator";
+import jwt from "jsonwebtoken";
+import env from "../config/dotenv";
 
 const userRepository = AppDataSource.getRepository(User);
 
@@ -52,6 +54,17 @@ export const register = async (
         await userRepository.save(user);
 
         logger.info("User has been registered", { id: user.id });
+
+        // const token = jwt.sign(user.id,env.JWT_SECRET)
+        const token = jwt.sign({ id: String(user.id) }, env.JWT_SECRET, {
+            expiresIn: env.JWT_TOKEN_EXPIRY_DAYS,
+        });
+
+        res.cookie("chat-with-pdf", token, {
+            maxAge: env.COOKIE_MAXAGE_DAYS * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+        });
 
         res.status(201).json({
             message: "User registered successfully",
@@ -106,6 +119,17 @@ export const login = async (
             );
             return next(error);
         }
+
+        // const token = jwt.sign(user.id,env.JWT_SECRET)
+        const token = jwt.sign({ id: String(isUserExits.id) }, env.JWT_SECRET, {
+            expiresIn: env.JWT_TOKEN_EXPIRY_DAYS,
+        });
+
+        res.cookie("chat-with-pdf", token, {
+            maxAge: env.COOKIE_MAXAGE_DAYS * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+        });
 
         logger.info("User has been logged in", { id: isUserExits.id });
 
