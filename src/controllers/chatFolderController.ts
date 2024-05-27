@@ -36,6 +36,21 @@ export const createChatFolder = async (
     }
 };
 
+export const getOneChatFolder = async (
+    req: AuthMiddlewareProps,
+    res: Response,
+    next: NextFunction,
+) => {
+    try {
+        const folder = await chatFolderRepository.findOne({
+            where: { id: req.params.id },
+        });
+        res.json(folder);
+    } catch (error) {
+        return next(error);
+    }
+};
+
 export const getAllSelfChatFolder = async (
     req: AuthMiddlewareProps,
     res: Response,
