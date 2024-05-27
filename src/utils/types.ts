@@ -7,3 +7,10 @@ export interface IResgisterUserRequest extends Request {
         password: string;
     };
 }
+
+export interface ILoginUserRequest extends Request {
+    body: {
+        email: string;
+        password: string;
+    };
+}
