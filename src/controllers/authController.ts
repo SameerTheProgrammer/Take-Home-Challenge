@@ -1,5 +1,9 @@
 import { NextFunction, Response } from "express";
-import { ILoginUserRequest, IResgisterUserRequest } from "../utils/types";
+import {
+    AuthRequest,
+    ILoginUserRequest,
+    IResgisterUserRequest,
+} from "../utils/types";
 import { AppDataSource } from "../config/data-source";
 import { User } from "../entity/User";
 import createHttpError from "http-errors";
@@ -63,7 +67,7 @@ export const register = async (
         res.cookie("chat-with-pdf", token, {
             maxAge: env.COOKIE_MAXAGE_DAYS * 24 * 60 * 60 * 1000,
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === "prod", // Use secure cookies in production
         });
 
         res.status(201).json({
@@ -128,7 +132,7 @@ export const login = async (
         res.cookie("chat-with-pdf", token, {
             maxAge: env.COOKIE_MAXAGE_DAYS * 24 * 60 * 60 * 1000,
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === "prod", // Use secure cookies in production
         });
 
         logger.info("User has been logged in", { id: isUserExits.id });
@@ -140,4 +144,11 @@ export const login = async (
     } catch (error) {
         return next(error);
     }
+};
+
+export const logout = (req: AuthRequest, res: Response) => {
+    res.clearCookie("chat-with-pdf");
+    res.status(200).json({
+        message: "You are logout",
+    });
 };

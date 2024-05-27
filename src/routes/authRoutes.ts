@@ -1,13 +1,20 @@
 import express, { RequestHandler } from "express";
-import { login, register } from "../controllers/authController";
+import { login, logout, register } from "../controllers/authController";
 import {
     loginValidation,
     registerValidation,
 } from "./../validators/authValidator";
+import { isAuthenticated } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
-router.route("/").post(registerValidation, register as RequestHandler);
-router.route("/login").post(loginValidation, login as RequestHandler);
+// Registration route
+router.post("/register", registerValidation, register as RequestHandler);
+
+// Login route
+router.post("/login", loginValidation, login as RequestHandler);
+
+// Logout route (protected)
+router.get("/logout", isAuthenticated, logout as RequestHandler);
 
 export default router;

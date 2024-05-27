@@ -14,3 +14,7 @@ export interface ILoginUserRequest extends Request {
         password: string;
     };
 }
+
+export interface AuthRequest extends Request {
+    id?: string;
+}
