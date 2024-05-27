@@ -15,6 +15,10 @@ router.post("/register", registerValidation, register as RequestHandler);
 router.post("/login", loginValidation, login as RequestHandler);
 
 // Logout route (protected)
-router.get("/logout", isAuthenticated, logout as RequestHandler);
+router.get(
+    "/logout",
+    isAuthenticated as RequestHandler,
+    logout as RequestHandler,
+);
 
 export default router;

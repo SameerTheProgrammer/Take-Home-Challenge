@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { User } from "../entity/User";
 
 export interface IResgisterUserRequest extends Request {
     body: {
@@ -17,4 +18,12 @@ export interface ILoginUserRequest extends Request {
 
 export interface AuthRequest extends Request {
     id?: string;
+}
+
+export interface AuthMiddlewareRequest extends Request {
+    cookies: {
+        "chat-with-pdf"?: string;
+    };
+    userId?: string;
+    user?: User;
 }

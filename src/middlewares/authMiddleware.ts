@@ -1,17 +1,15 @@
-import { Response, NextFunction, Request } from "express";
+import { Response, NextFunction } from "express";
 import createHttpError from "http-errors";
 import jwt from "jsonwebtoken";
 import env from "../config/dotenv";
+import { AppDataSource } from "../config/data-source";
+import { User } from "../entity/User";
+import { AuthMiddlewareRequest } from "../utils/types";
 
-interface AuthRequest extends Request {
-    cookies: {
-        "chat-with-pdf"?: string;
-    };
-    userId?: string;
-}
+const userRepository = AppDataSource.getRepository(User);
 
-export const isAuthenticated = (
-    req: AuthRequest,
+export const isAuthenticated = async (
+    req: AuthMiddlewareRequest,
     res: Response,
     next: NextFunction,
 ) => {
@@ -23,7 +21,14 @@ export const isAuthenticated = (
 
     try {
         const decoded = jwt.verify(token, env.JWT_SECRET) as { id: string };
-        req.userId = decoded.id;
+        const user = await userRepository.findOneBy({ id: decoded.id });
+
+        if (!user) {
+            return res.status(401).json({ message: "Invalid token" });
+        }
+
+        req.user = user;
+        req.userId = user.id;
         next();
     } catch (error) {
         return next(createHttpError(401, "Invalid authentication token"));

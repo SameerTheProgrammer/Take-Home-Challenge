@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { ChatFolder } from "./ChatFolder";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    id: number;
+    id: string;
 
     @Column()
     name: string;
@@ -13,4 +14,7 @@ export class User {
 
     @Column()
     password: string;
+
+    @OneToMany(() => ChatFolder, (folder) => folder.user)
+    chatFolders: ChatFolder[];
 }

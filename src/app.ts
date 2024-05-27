@@ -9,6 +9,7 @@ import morgan from "morgan";
 import sanitize from "express-mongo-sanitize";
 import logger from "./config/logger";
 import authRoutes from "./routes/authRoutes";
+import chatFolderRoutes from "./routes/chatFolderRoute";
 
 // Initialize Express app
 const app = express();
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/chat-folder", chatFolderRoutes);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
