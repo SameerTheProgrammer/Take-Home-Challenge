@@ -20,10 +20,13 @@ export interface AuthRequest extends Request {
     id?: string;
 }
 
-export interface AuthMiddlewareRequest extends Request {
+export interface AuthMiddlewareProps extends Request {
+    userId?: string;
+    user?: User;
+}
+
+export interface AuthMiddlewareRequest extends AuthMiddlewareProps {
     cookies: {
         "chat-with-pdf"?: string;
     };
-    userId?: string;
-    user?: User;
 }
