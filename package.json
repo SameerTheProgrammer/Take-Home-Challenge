@@ -17,6 +17,7 @@
     "author": "Sameer Kumar",
     "license": "ISC",
     "dependencies": {
+        "bcryptjs": "^2.4.3",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
@@ -35,6 +36,7 @@
         "winston": "^3.13.0"
     },
     "devDependencies": {
+        "@types/bcryptjs": "^2.4.6",
         "@types/compression": "^1.7.5",
         "@types/cookie-parser": "^1.4.7",
         "@types/cors": "^2.8.17",

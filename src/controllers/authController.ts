@@ -4,6 +4,7 @@ import { AppDataSource } from "../config/data-source";
 import { User } from "../entity/User";
 import createHttpError from "http-errors";
 import logger from "../config/logger";
+import bcrypt from "bcryptjs";
 
 const userRepository = AppDataSource.getRepository(User);
 
@@ -27,7 +28,15 @@ export const register = async (
             return next(error);
         }
 
-        const user = userRepository.create({ name, email, password });
+        // converting normal password to hashed password
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        const user = userRepository.create({
+            name,
+            email,
+            password: hashedPassword,
+        });
         await userRepository.save(user);
 
         logger.info("User has been registered", { id: user.id });
