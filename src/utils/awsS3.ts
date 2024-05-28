@@ -5,14 +5,20 @@ import createHttpError from "http-errors";
 import env from "../config/dotenv";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-// Function to upload a buffer to S3
-export const uploadToS3 = async (file: Express.Multer.File) => {
+/**
+ * Upload a buffer to S3
+ * @param file - The file object from Multer
+ * @param userId - The ID of the user uploading the file
+ * @returns The data from the S3 upload response
+ */
+
+export const uploadToS3 = async (file: Express.Multer.File, userId: string) => {
     const passThrough = new PassThrough();
     passThrough.end(file.buffer);
 
     const uploadParams = {
-        Bucket: process.env.S3_BUCKET_NAME!,
-        Key: `uploads/${file.originalname}`,
+        Bucket: env.S3_BUCKET_NAME,
+        Key: `uploads/${userId}/${file.originalname}-${Date.now()}`,
         Body: passThrough,
         ContentType: file.mimetype,
     };
@@ -29,11 +35,21 @@ export const uploadToS3 = async (file: Express.Multer.File) => {
     }
 };
 
+/**
+ * Get a signed URL for a file in S3
+ * @param key - The key of the file in S3
+ * @returns The signed URL for the file
+ */
 export const getPdfUrl = async (key: string) => {
     const command = new GetObjectCommand({
         Bucket: env.S3_BUCKET_NAME,
         Key: key,
     });
-    const url = await getSignedUrl(s3, command);
-    return url;
+
+    try {
+        const url = await getSignedUrl(s3, command);
+        return url;
+    } catch (err) {
+        throw new Error("Error while generating signed URL");
+    }
 };
