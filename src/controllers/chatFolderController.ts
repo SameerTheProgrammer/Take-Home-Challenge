@@ -2,6 +2,7 @@ import { NextFunction, Response } from "express";
 import { AppDataSource } from "../config/data-source";
 import { ChatFolder } from "../entity/ChatFolder";
 import { AuthMiddlewareProps, AuthMiddlewareRequest } from "../utils/types";
+import { uploadToS3 } from "../utils/awsS3";
 
 const chatFolderRepository = AppDataSource.getRepository(ChatFolder);
 
@@ -17,20 +18,33 @@ export const createChatFolder = async (
     next: NextFunction,
 ) => {
     const { name } = req.body;
-    const user = req.user;
+    const userId = req.user?.id;
 
     try {
+        if (!userId) {
+            return res.status(401).json({ message: "User not authenticated" });
+        }
+
+        const file = req.file;
+        if (!file || !file.mimetype.startsWith("application/pdf")) {
+            return res
+                .status(400)
+                .send({ message: "Please upload a PDF file" });
+        }
+
+        const result = await uploadToS3(file, userId);
+
         const chatFolder = chatFolderRepository.create({
             name,
             status: "creating",
             embedding: [],
             content: "",
-            user,
+            user: req.user,
         });
 
         await chatFolderRepository.save(chatFolder);
 
-        res.status(201).json(chatFolder);
+        res.status(201).json({ result, chatFolder });
     } catch (error) {
         return next(error);
     }

@@ -1,5 +1,4 @@
 import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
-import { PassThrough } from "stream";
 import s3 from "./../config/s3";
 import createHttpError from "http-errors";
 import env from "../config/dotenv";
@@ -13,13 +12,10 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
  */
 
 export const uploadToS3 = async (file: Express.Multer.File, userId: string) => {
-    const passThrough = new PassThrough();
-    passThrough.end(file.buffer);
-
     const uploadParams = {
         Bucket: env.S3_BUCKET_NAME,
         Key: `uploads/${userId}/${file.originalname}-${Date.now()}`,
-        Body: passThrough,
+        Body: file.buffer,
         ContentType: file.mimetype,
     };
 

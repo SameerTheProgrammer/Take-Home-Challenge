@@ -6,6 +6,7 @@ import {
     getOneChatFolder,
 } from "../controllers/chatFolderController";
 import { isAuthenticated } from "../middlewares/authMiddleware";
+import { upload } from "../config/multer";
 
 const router = Router();
 
@@ -13,6 +14,7 @@ router
     .post(
         "/",
         isAuthenticated as RequestHandler,
+        upload.single("pdf"),
         createChatFolder as RequestHandler,
     )
     .get(
