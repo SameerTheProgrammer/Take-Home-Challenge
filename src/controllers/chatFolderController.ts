@@ -4,6 +4,8 @@ import { ChatFolder } from "../entity/ChatFolder";
 import { AuthMiddlewareProps, AuthMiddlewareRequest } from "../utils/types";
 import { getPdfUrl, uploadToS3 } from "../utils/awsS3";
 import createHttpError from "http-errors";
+import axios, { AxiosResponse } from "axios";
+import { extractTextFromPDF } from "../utils/pdfParse";
 
 const chatFolderRepository = AppDataSource.getRepository(ChatFolder);
 
@@ -45,6 +47,19 @@ export const createChatFolder = async (
             s3Key: key,
             user: req.user,
         });
+
+        type PDFContent = ArrayBuffer;
+        // Make the Axios request with generics
+        const response: AxiosResponse<PDFContent> = await axios.get(
+            chatFolder.s3Url,
+            {
+                responseType: "arraybuffer",
+            },
+        );
+        const pdfContent: Buffer = Buffer.from(response.data);
+        const text = await extractTextFromPDF(pdfContent);
+
+        chatFolder.content = text;
 
         await chatFolderRepository.save(chatFolder);
         res.status(201).json({ chatFolder });
