@@ -20,8 +20,8 @@ export const uploadToS3 = async (file: Express.Multer.File, userId: string) => {
     };
 
     try {
-        const data = await s3.send(new PutObjectCommand(uploadParams));
-        return data;
+        const result = await s3.send(new PutObjectCommand(uploadParams));
+        return { key: uploadParams.Key, result };
     } catch (err) {
         const error = createHttpError(
             500,

@@ -18,6 +18,12 @@ export class ChatFolder extends BaseEntity {
     @Column()
     status: string;
 
+    @Column({ default: "" })
+    s3Key: string;
+
+    @Column({ default: "" })
+    s3Url: string;
+
     @Column("jsonb")
     embedding: number[];
 
