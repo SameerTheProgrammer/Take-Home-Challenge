@@ -17,6 +17,10 @@ export const env = cleanEnv(process.env, {
     JWT_SECRET: str(),
     JWT_TOKEN_EXPIRY_DAYS: str(),
     COOKIE_MAXAGE_DAYS: num(),
+    AWS_ACCESS_KEY_ID: str(),
+    AWS_SECRET_ACCESS_KEY: str(),
+    AWS_REGION: str(),
+    S3_BUCKET_NAME: str(),
 });
 
 export default env;
