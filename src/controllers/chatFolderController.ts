@@ -6,6 +6,7 @@ import { getPdfUrl, uploadToS3 } from "../utils/awsS3";
 import createHttpError from "http-errors";
 import axios, { AxiosResponse } from "axios";
 import { extractTextFromPDF } from "../utils/pdfParse";
+import { splitText } from "../utils/other";
 
 const chatFolderRepository = AppDataSource.getRepository(ChatFolder);
 
@@ -60,8 +61,12 @@ export const createChatFolder = async (
         const text = await extractTextFromPDF(pdfContent);
 
         chatFolder.content = text;
-
         await chatFolderRepository.save(chatFolder);
+
+        // Split the text into chunks
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const chunks = splitText(text);
+
         res.status(201).json({ chatFolder });
     } catch (error) {
         return next(error);
