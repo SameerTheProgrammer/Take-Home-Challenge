@@ -21,6 +21,8 @@ export const env = cleanEnv(process.env, {
     AWS_SECRET_ACCESS_KEY: str(),
     AWS_REGION: str(),
     S3_BUCKET_NAME: str(),
+    REDIS_PORT: port(),
+    REDIS_HOST: str(),
 });
 
 export default env;

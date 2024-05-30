@@ -10,6 +10,7 @@ import sanitize from "express-mongo-sanitize";
 import logger from "./config/logger";
 import authRoutes from "./routes/authRoutes";
 import chatFolderRoutes from "./routes/chatFolderRoute";
+import "./bullmq/worker/processPdf";
 
 // Initialize Express app
 const app = express();

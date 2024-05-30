@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Response } from "express";
 import { AppDataSource } from "../config/data-source";
 import { ChatFolder } from "../entity/ChatFolder";
@@ -7,6 +8,7 @@ import createHttpError from "http-errors";
 import axios, { AxiosResponse } from "axios";
 import { extractTextFromPDF } from "../utils/pdfParse";
 import { splitText } from "../utils/other";
+import pdfQueue from "../bullmq/queue";
 
 const chatFolderRepository = AppDataSource.getRepository(ChatFolder);
 
@@ -49,25 +51,29 @@ export const createChatFolder = async (
             user: req.user,
         });
 
-        type PDFContent = ArrayBuffer;
         // Make the Axios request with generics
-        const response: AxiosResponse<PDFContent> = await axios.get(
-            chatFolder.s3Url,
-            {
-                responseType: "arraybuffer",
-            },
-        );
-        const pdfContent: Buffer = Buffer.from(response.data);
-        const text = await extractTextFromPDF(pdfContent);
+        // const response: AxiosResponse<ArrayBuffer> = await axios.get(
+        //     chatFolder.s3Url,
+        //     {
+        //         responseType: "arraybuffer",
+        //     },
+        // );
+        // const pdfContent: Buffer = Buffer.from(response.data);
+        // const text = await extractTextFromPDF(pdfContent);
 
-        chatFolder.content = text;
-        await chatFolderRepository.save(chatFolder);
+        // chatFolder.content = text;
 
         // Split the text into chunks
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const chunks = splitText(text);
+        // const chunks = splitText(text);
 
-        res.status(201).json({ chatFolder });
+        const newChatFolder = await chatFolderRepository.save(chatFolder);
+
+        await pdfQueue.add("pdfQueue", {
+            s3Url: url,
+            chatFolderId: newChatFolder.id,
+        });
+
+        res.status(201).json({ newChatFolder });
     } catch (error) {
         return next(error);
     }
@@ -82,6 +88,10 @@ export const getOneChatFolder = async (
         const folder = await chatFolderRepository.findOne({
             where: { id: req.params.id },
         });
+        if (!folder) {
+            const error = createHttpError(400, "ChatFolder not found");
+            return next(error);
+        }
         res.json(folder);
     } catch (error) {
         return next(error);
