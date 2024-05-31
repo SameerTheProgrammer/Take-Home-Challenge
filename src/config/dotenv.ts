@@ -23,6 +23,7 @@ export const env = cleanEnv(process.env, {
     S3_BUCKET_NAME: str(),
     REDIS_PORT: port(),
     REDIS_HOST: str(),
+    OPENAI_API_KEY: str(),
 });
 
 export default env;
