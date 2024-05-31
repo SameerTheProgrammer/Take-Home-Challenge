@@ -46,7 +46,6 @@ const pdfWorker = new Worker(
                 throw err;
             }
             await chatFolderRepository.update(chatFolderId, {
-                content: text,
                 status: "success",
             });
         } catch (error) {

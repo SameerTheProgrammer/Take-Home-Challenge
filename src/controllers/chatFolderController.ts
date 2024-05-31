@@ -1,20 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Response } from "express";
 import { AppDataSource } from "../config/data-source";
 import { ChatFolder } from "../entity/ChatFolder";
 import { AuthMiddlewareProps, AuthMiddlewareRequest } from "../utils/types";
 import { getPdfUrl, uploadToS3 } from "../utils/awsS3";
 import createHttpError from "http-errors";
-import axios, { AxiosResponse } from "axios";
-import { extractTextFromPDF } from "../utils/pdfParse";
-import { splitText } from "../utils/other";
 import pdfQueue from "../bullmq/queue";
 
 const chatFolderRepository = AppDataSource.getRepository(ChatFolder);
 
 interface ICreateChatFolderRequest extends AuthMiddlewareRequest {
     body: {
-        name: string;
+        title: string;
     };
 }
 
@@ -23,7 +19,7 @@ export const createChatFolder = async (
     res: Response,
     next: NextFunction,
 ) => {
-    const { name } = req.body;
+    const { title } = req.body;
     const userId = req.user?.id;
 
     try {
@@ -42,29 +38,12 @@ export const createChatFolder = async (
         const url = await getPdfUrl(key);
 
         const chatFolder = chatFolderRepository.create({
-            name,
+            title,
             status: "creating",
-            embedding: [],
-            content: "",
             s3Url: url,
             s3Key: key,
             user: req.user,
         });
-
-        // Make the Axios request with generics
-        // const response: AxiosResponse<ArrayBuffer> = await axios.get(
-        //     chatFolder.s3Url,
-        //     {
-        //         responseType: "arraybuffer",
-        //     },
-        // );
-        // const pdfContent: Buffer = Buffer.from(response.data);
-        // const text = await extractTextFromPDF(pdfContent);
-
-        // chatFolder.content = text;
-
-        // Split the text into chunks
-        // const chunks = splitText(text);
 
         const newChatFolder = await chatFolderRepository.save(chatFolder);
 

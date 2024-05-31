@@ -4,8 +4,11 @@ import {
     Column,
     BaseEntity,
     ManyToOne,
+    OneToMany,
+    // OneToMany,
 } from "typeorm";
 import { User } from "./User";
+import { ChunkEmbedding } from "./ChunkEmbedding";
 
 @Entity()
 export class ChatFolder extends BaseEntity {
@@ -13,7 +16,7 @@ export class ChatFolder extends BaseEntity {
     id: string;
 
     @Column()
-    name: string;
+    title: string;
 
     @Column()
     status: string;
@@ -24,12 +27,12 @@ export class ChatFolder extends BaseEntity {
     @Column({ default: "" })
     s3Url: string;
 
-    @Column("jsonb")
-    embedding: number[];
-
-    @Column()
-    content: string;
-
     @ManyToOne(() => User, (user) => user.chatFolders)
     user: User;
+
+    @OneToMany(
+        () => ChunkEmbedding,
+        (chunkEmbedding) => chunkEmbedding.chatFolders,
+    )
+    chunkEmbedding: ChunkEmbedding[];
 }
