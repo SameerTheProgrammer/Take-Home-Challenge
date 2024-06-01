@@ -24,6 +24,7 @@ export const env = cleanEnv(process.env, {
     REDIS_PORT: port(),
     REDIS_HOST: str(),
     OPENAI_API_KEY: str(),
+    GEMINI_API_KEY: str(),
 });
 
 export default env;

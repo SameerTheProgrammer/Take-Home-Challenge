@@ -10,6 +10,7 @@ import sanitize from "express-mongo-sanitize";
 import logger from "./config/logger";
 import authRoutes from "./routes/authRoutes";
 import chatFolderRoutes from "./routes/chatFolderRoute";
+import questionAnswerRoutes from "./routes/questionAnswer";
 import "./bullmq/worker/processPdf";
 
 // Initialize Express app
@@ -30,6 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/chat-folder", chatFolderRoutes);
+app.use("/api/v1/question", questionAnswerRoutes);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {

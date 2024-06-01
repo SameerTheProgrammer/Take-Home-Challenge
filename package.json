@@ -13,7 +13,9 @@
         "prepare": "husky",
         "start": "ts-node src/index.ts",
         "typeorm": "typeorm-ts-node-commonjs",
-        "migration:generate": "typeorm-ts-node-commonjs migration:generate "
+        "migration:generate": "typeorm-ts-node-commonjs migration:generate ",
+        "migration:create": "typeorm-ts-node-commonjs migration:create ",
+        "migration:run": "typeorm-ts-node-commonjs migration:run "
     },
     "author": "Sameer Kumar",
     "license": "ISC",

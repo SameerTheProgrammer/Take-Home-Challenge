@@ -5,10 +5,10 @@ import {
     BaseEntity,
     ManyToOne,
     OneToMany,
-    // OneToMany,
 } from "typeorm";
 import { User } from "./User";
 import { ChunkEmbedding } from "./ChunkEmbedding";
+import { QuestionAnswer } from "./QuestionAnwser";
 
 @Entity()
 export class ChatFolder extends BaseEntity {
@@ -21,10 +21,10 @@ export class ChatFolder extends BaseEntity {
     @Column()
     status: string;
 
-    @Column({ default: "" })
+    @Column()
     s3Key: string;
 
-    @Column({ default: "" })
+    @Column()
     s3Url: string;
 
     @ManyToOne(() => User, (user) => user.chatFolders)
@@ -32,7 +32,13 @@ export class ChatFolder extends BaseEntity {
 
     @OneToMany(
         () => ChunkEmbedding,
-        (chunkEmbedding) => chunkEmbedding.chatFolders,
+        (chunkEmbedding) => chunkEmbedding.chatFolder,
     )
-    chunkEmbedding: ChunkEmbedding[];
+    chunkEmbeddings: ChunkEmbedding[];
+
+    @OneToMany(
+        () => QuestionAnswer,
+        (questionAnswer) => questionAnswer.chatFolder,
+    )
+    QuestionAnswer: QuestionAnswer[];
 }

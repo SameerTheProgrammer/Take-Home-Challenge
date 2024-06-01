@@ -8,8 +8,11 @@ import { AppDataSource } from "../../config/data-source";
 import createHttpError from "http-errors";
 import logger from "../../config/logger";
 import redisConnection from "../../config/redis";
+import { generateEmbedding } from "../../utils/embedding";
+import { ChunkEmbedding } from "../../entity/ChunkEmbedding";
 
 const chatFolderRepository = AppDataSource.getRepository(ChatFolder);
+const chunkEmbeddingRepository = AppDataSource.getRepository(ChunkEmbedding);
 
 type jobData = {
     s3Url: string;
@@ -36,7 +39,7 @@ const pdfWorker = new Worker(
             // Split the text into chunks
             const chunks = splitText(text);
 
-            console.log("length of chunks", chunks.length);
+            logger.info("length of chunks", chunks.length);
 
             const chatFolder = await chatFolderRepository.findOne({
                 where: { id: chatFolderId },
@@ -45,6 +48,17 @@ const pdfWorker = new Worker(
                 const err = createHttpError(400, "chat folder not found");
                 throw err;
             }
+
+            for (let i = 0; i < chunks.length; i++) {
+                const embedding = await generateEmbedding(chunks[i]);
+                const newChunkEmbedding = chunkEmbeddingRepository.create({
+                    chunk: chunks[i],
+                    embedding: JSON.stringify(embedding),
+                    chatFolder: chatFolder,
+                });
+                await chunkEmbeddingRepository.save(newChunkEmbedding);
+            }
+
             await chatFolderRepository.update(chatFolderId, {
                 status: "success",
             });

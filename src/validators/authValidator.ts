@@ -2,7 +2,7 @@ import { checkSchema } from "express-validator";
 
 export const registerValidation = checkSchema({
     name: {
-        errorMessage: "First Name is required",
+        errorMessage: "Name is required",
         trim: true,
         notEmpty: true,
         isLength: {
@@ -11,7 +11,7 @@ export const registerValidation = checkSchema({
                 max: 30,
             },
             errorMessage:
-                "First Name should between least 2 chars and maximum 30 chars",
+                "Name should between least 2 chars and maximum 30 chars",
         },
     },
     email: {
