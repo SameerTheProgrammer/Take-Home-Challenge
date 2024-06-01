@@ -13,7 +13,8 @@ export const findTop3SimilarChunks = async (
     const results: ChunkEmbedding[] = await connection
         .getRepository(ChunkEmbedding)
         .createQueryBuilder("chunk")
-        // .where("chatFolderId = :chatFolderId", { chatFolderId })
+        .innerJoin("chunk.chatFolder", "chatFolder")
+        .where("chatFolder.id = :chatFolderId", { chatFolderId })
         .orderBy("(chunk.embedding <=> :queryEmbedding)", "ASC") // Order by similarity
         .setParameter("queryEmbedding", questionEmbedding)
         .limit(2)
