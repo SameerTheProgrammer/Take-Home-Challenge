@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import { generateEmbedding } from "../utils/embedding";
 import { QuestionAnswer } from "../entity/QuestionAnwser";
 import { AppDataSource } from "../config/data-source";
 import { ChatFolder } from "./../entity/ChatFolder";
 import createHttpError from "http-errors";
 import { findTop3SimilarChunks } from "../utils/similaritySearch";
-import { getResponse } from "../utils/getResponse";
 import { AuthMiddlewareProps } from "../utils/types";
+import { generateGeminiResponse } from "../utils/geminiResponse";
+import { generateGeminiEmbedding } from "../utils/geminiEmbedding";
 
 interface ICQuestionAndAnswerRequest extends AuthMiddlewareProps {
     body: {
@@ -25,8 +25,7 @@ export const createQuestionAndAnswer = async (
     try {
         const { question } = req.body;
         const { id } = req.params;
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const questionEmbedding = await generateEmbedding(question);
+        const questionEmbedding = await generateGeminiEmbedding(question);
         const chatfolder = await chatFolderRepository.findOne({
             where: { id: id },
         });
@@ -41,7 +40,10 @@ export const createQuestionAndAnswer = async (
         }
 
         if (chatfolder.status === "failed") {
-            const error = createHttpError(400, "ChatFolder is faied to create");
+            const error = createHttpError(
+                400,
+                "ChatFolder is failed to create",
+            );
             return next(error);
         }
         const top3SimilarChunk = await findTop3SimilarChunks(
@@ -52,7 +54,7 @@ export const createQuestionAndAnswer = async (
             .map((chunk, index) => `Chunk ${index + 1}: ${chunk}`)
             .join("\n");
 
-        const answer = await getResponse(context, question);
+        const answer = await generateGeminiResponse(context, question);
         const newQA = questionAnswerRepository.create({
             question: question,
             answer: answer,

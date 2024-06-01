@@ -8,8 +8,8 @@ import { AppDataSource } from "../../config/data-source";
 import createHttpError from "http-errors";
 import logger from "../../config/logger";
 import redisConnection from "../../config/redis";
-import { generateEmbedding } from "../../utils/embedding";
 import { ChunkEmbedding } from "../../entity/ChunkEmbedding";
+import { generateGeminiEmbedding } from "../../utils/geminiEmbedding";
 
 const chatFolderRepository = AppDataSource.getRepository(ChatFolder);
 const chunkEmbeddingRepository = AppDataSource.getRepository(ChunkEmbedding);
@@ -39,8 +39,6 @@ const pdfWorker = new Worker(
             // Split the text into chunks
             const chunks = splitText(text);
 
-            logger.info("length of chunks", chunks.length);
-
             const chatFolder = await chatFolderRepository.findOne({
                 where: { id: chatFolderId },
             });
@@ -50,7 +48,7 @@ const pdfWorker = new Worker(
             }
 
             for (let i = 0; i < chunks.length; i++) {
-                const embedding = await generateEmbedding(chunks[i]);
+                const embedding = await generateGeminiEmbedding(chunks[i]);
                 const newChunkEmbedding = chunkEmbeddingRepository.create({
                     chunk: chunks[i],
                     embedding: JSON.stringify(embedding),
