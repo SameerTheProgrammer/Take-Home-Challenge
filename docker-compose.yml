@@ -2,7 +2,6 @@ version: "3.8"
 
 services:
     backend:
-<<<<<<< HEAD
         container_name: backend-chatPDF
         build:
             context: .
@@ -29,31 +28,16 @@ services:
             - REDIS_PORT= ${REDIS_PORT}
             - REDIS_HOST= ${REDIS_HOST}
             - GEMINI_API_KEY= ${GEMINI_API_KEY}
-=======
-        build:
-            context: .
-            dockerfile: Dockerfile
-            args:
-                NODE_ENV: prod
-        ports:
-            - "3000:3000"
-        environment:
-            NODE_ENV: prod
->>>>>>> 3c764623bf1fd513972ea8d991bb4b65bc2bf404
         depends_on:
             - db
             - redis
 
     db:
-<<<<<<< HEAD
         container_name: pgvector-postgres-chatPDF
-=======
->>>>>>> 3c764623bf1fd513972ea8d991bb4b65bc2bf404
         image: pgvector/pgvector:pg16
         ports:
             - "5432:5432"
         environment:
-<<<<<<< HEAD
             POSTGRES_USER: ${DB_USERNAME}
             POSTGRES_PASSWORD: ${DB_PASSWORD}
             POSTGRES_DB: ${DB_NAME}
@@ -71,19 +55,3 @@ services:
 volumes:
     vectorpgdata:
     redis_data:
-=======
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: password
-            POSTGRES_DB: postgres
-        volumes:
-            - pgdata:/var/lib/postgresql/data
-            - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
-
-    redis:
-        image: redis:7
-        ports:
-            - "6379:6379"
-
-volumes:
-    pgdata:
->>>>>>> 3c764623bf1fd513972ea8d991bb4b65bc2bf404

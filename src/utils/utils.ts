@@ -22,7 +22,7 @@ export const splitText = (text: string, chunkSize = 800, overlap = 100) => {
 
 export const findTop3SimilarChunks = async (
     queryEmbedding: number[],
-    chatFolderId: string,
+    folderId: string,
 ) => {
     const connection = AppDataSource;
     const questionEmbedding = JSON.stringify(queryEmbedding);
@@ -30,8 +30,8 @@ export const findTop3SimilarChunks = async (
     const results: ChunkEmbedding[] = await connection
         .getRepository(ChunkEmbedding)
         .createQueryBuilder("chunk")
-        .innerJoin("chunk.chatFolder", "chatFolder")
-        .where("chatFolder.id = :chatFolderId", { chatFolderId })
+        .innerJoin("chunk.folderId", "folderId")
+        .where("folderId.id = :folderId", { folderId })
         .orderBy("(chunk.embedding <=> :queryEmbedding)", "ASC") // Order by similarity
         .setParameter("queryEmbedding", questionEmbedding)
         .limit(2)
