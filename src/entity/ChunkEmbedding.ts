@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { ChatFolder } from "./ChatFolder";
+import { Folder } from "./Folder";
 
 @Entity("chunk_embedding")
 export class ChunkEmbedding {
@@ -12,6 +12,6 @@ export class ChunkEmbedding {
     @Column()
     embedding: string;
 
-    @ManyToOne(() => ChatFolder, (chatFolder) => chatFolder.chunkEmbeddings)
-    chatFolder: ChatFolder;
+    @ManyToOne(() => Folder, (folder) => folder.chunkEmbeddings)
+    folder: Folder;
 }

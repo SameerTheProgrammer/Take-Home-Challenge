@@ -1,21 +1,15 @@
 import { NextFunction, Response } from "express";
 import { AppDataSource } from "../config/data-source";
-import { ChatFolder } from "../entity/ChatFolder";
-import { AuthMiddlewareProps, AuthMiddlewareRequest } from "../utils/types";
+import { Folder } from "../entity/Folder";
+import { AuthMiddlewareProps, ICreateFolderRequest } from "../utils/types";
 import { getPdfUrl, uploadToS3 } from "../utils/awsS3";
 import createHttpError from "http-errors";
 import pdfQueue from "../bullmq/queue";
 
-const chatFolderRepository = AppDataSource.getRepository(ChatFolder);
+const folderRepository = AppDataSource.getRepository(Folder);
 
-interface ICreateChatFolderRequest extends AuthMiddlewareRequest {
-    body: {
-        title: string;
-    };
-}
-
-export const createChatFolder = async (
-    req: ICreateChatFolderRequest,
+export const createFolder = async (
+    req: ICreateFolderRequest,
     res: Response,
     next: NextFunction,
 ) => {
@@ -34,41 +28,42 @@ export const createChatFolder = async (
             return next(error);
         }
 
+        // Uploading the pdf into aws s3 bucket and getting pdf url
         const { key } = await uploadToS3(file, userId);
         const url = await getPdfUrl(key);
 
-        const chatFolder = chatFolderRepository.create({
+        const folder = folderRepository.create({
             title,
             status: "creating",
             s3Url: url,
             s3Key: key,
             user: req.user,
         });
+        const newFolder = await folderRepository.save(folder);
 
-        const newChatFolder = await chatFolderRepository.save(chatFolder);
-
+        // starting Queue for further process
         await pdfQueue.add("pdfQueue", {
             s3Url: url,
-            chatFolderId: newChatFolder.id,
+            folderId: newFolder.id,
         });
 
-        res.status(201).json({ newChatFolder });
+        res.status(201).json({ newFolder });
     } catch (error) {
         return next(error);
     }
 };
 
-export const getOneChatFolder = async (
+export const getOneFolder = async (
     req: AuthMiddlewareProps,
     res: Response,
     next: NextFunction,
 ) => {
     try {
-        const folder = await chatFolderRepository.findOne({
+        const folder = await folderRepository.findOne({
             where: { id: req.params.id },
         });
         if (!folder) {
-            const error = createHttpError(400, "ChatFolder not found");
+            const error = createHttpError(400, "Folder not found");
             return next(error);
         }
         res.json(folder);
@@ -77,20 +72,19 @@ export const getOneChatFolder = async (
     }
 };
 
-export const getAllSelfChatFolder = async (
+export const getAllSelfFolder = async (
     req: AuthMiddlewareProps,
     res: Response,
     next: NextFunction,
 ) => {
     const userId = req.user?.id;
     if (!userId) {
-        return res.status(401).json({ message: "User not authenticated" });
+        return res.status(401).json({ message: "User is not authenticated" });
     }
 
     try {
-        const allFolders = await chatFolderRepository.find({
+        const allFolders = await folderRepository.find({
             where: { user: { id: userId } },
-            // relations: ["user"], // Ensures that the user relationship is loaded
         });
         res.json(allFolders);
     } catch (error) {

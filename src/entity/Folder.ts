@@ -2,7 +2,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    BaseEntity,
     ManyToOne,
     OneToMany,
 } from "typeorm";
@@ -11,7 +10,7 @@ import { ChunkEmbedding } from "./ChunkEmbedding";
 import { QuestionAnswer } from "./QuestionAnwser";
 
 @Entity()
-export class ChatFolder extends BaseEntity {
+export class Folder {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
@@ -27,18 +26,12 @@ export class ChatFolder extends BaseEntity {
     @Column()
     s3Url: string;
 
-    @ManyToOne(() => User, (user) => user.chatFolders)
+    @ManyToOne(() => User, (user) => user.folders)
     user: User;
 
-    @OneToMany(
-        () => ChunkEmbedding,
-        (chunkEmbedding) => chunkEmbedding.chatFolder,
-    )
+    @OneToMany(() => ChunkEmbedding, (chunkEmbedding) => chunkEmbedding.folder)
     chunkEmbeddings: ChunkEmbedding[];
 
-    @OneToMany(
-        () => QuestionAnswer,
-        (questionAnswer) => questionAnswer.chatFolder,
-    )
+    @OneToMany(() => QuestionAnswer, (questionAnswer) => questionAnswer.folder)
     QuestionAnswer: QuestionAnswer[];
 }

@@ -27,6 +27,23 @@ export interface AuthMiddlewareProps extends Request {
 
 export interface AuthMiddlewareRequest extends AuthMiddlewareProps {
     cookies: {
-        "chat-with-pdf"?: string;
+        chatPDF?: string;
     };
+}
+
+export interface ICQuestionAndAnswerRequest extends AuthMiddlewareProps {
+    body: {
+        question: string;
+    };
+}
+
+export interface ICreateFolderRequest extends AuthMiddlewareRequest {
+    body: {
+        title: string;
+    };
+}
+
+export interface IJobData {
+    s3Url: string;
+    folderId: string;
 }

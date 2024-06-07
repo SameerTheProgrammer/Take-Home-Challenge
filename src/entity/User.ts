@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { ChatFolder } from "./ChatFolder";
+import { Folder } from "./Folder";
 
 @Entity()
 export class User {
@@ -15,6 +15,6 @@ export class User {
     @Column()
     password: string;
 
-    @OneToMany(() => ChatFolder, (folder) => folder.user)
-    chatFolders: ChatFolder[];
+    @OneToMany(() => Folder, (folder) => folder.user)
+    folders: Folder[];
 }

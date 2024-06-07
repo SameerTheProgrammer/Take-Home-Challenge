@@ -7,7 +7,7 @@ import {
     CreateDateColumn,
 } from "typeorm";
 import { User } from "./User";
-import { ChatFolder } from "./ChatFolder";
+import { Folder } from "./Folder";
 
 @Entity()
 export class QuestionAnswer {
@@ -23,8 +23,8 @@ export class QuestionAnswer {
     @ManyToOne(() => User)
     user: User;
 
-    @ManyToOne(() => ChatFolder, (folder) => folder.chunkEmbeddings)
-    chatFolder: ChatFolder;
+    @ManyToOne(() => Folder, (folder) => folder.chunkEmbeddings)
+    folder: Folder;
 
     @CreateDateColumn()
     createdAt: number;

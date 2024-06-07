@@ -1,9 +1,6 @@
 import express, { RequestHandler } from "express";
-import { login, logout, register } from "../controllers/authController";
-import {
-    loginValidation,
-    registerValidation,
-} from "./../validators/authValidator";
+import { login, logout, register } from "../controllers/authUserController";
+import { loginValidation, registerValidation } from "../validators/validator";
 import { isAuthenticated } from "../middlewares/authMiddleware";
 
 const router = express.Router();

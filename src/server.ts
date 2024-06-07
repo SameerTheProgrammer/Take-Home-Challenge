@@ -12,19 +12,13 @@ const startServer = async () => {
 
         await AppDataSource.query("CREATE EXTENSION IF NOT EXISTS vector;");
 
-        /*==================================================================================      
-                Alter the datatype of embdedding of chunk_embedding table 
-                from varchar to vector to support pgvector and similarity pg vector command  
-                ---> run this only one time 
-        ====================================================================================*/
-
         await AppDataSource.query(`
             ALTER TABLE chunk_embedding
             ALTER COLUMN embedding TYPE vector(768) USING embedding::vector;
         `);
 
         app.listen(PORT, () => {
-            logger.info(`server is running on port ${PORT}..`);
+            logger.info(`Server is running on port ${PORT}..`);
         });
     } catch (error) {
         if (error instanceof Error) {

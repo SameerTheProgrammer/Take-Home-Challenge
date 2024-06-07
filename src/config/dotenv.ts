@@ -3,12 +3,18 @@ import { cleanEnv, num, port, str } from "envalid";
 import path from "path";
 
 config({
-    path: path.join(__dirname, `../../.env.${process.env.NODE_ENV || "dev"}`),
+    path: path.join(
+        __dirname,
+        `../../.env.${process.env.NODE_ENV || "development"}`,
+    ),
 });
 
 export const env = cleanEnv(process.env, {
     PORT: port(),
-    NODE_ENV: str({ default: "dev", choices: ["test", "prod", "dev"] }),
+    NODE_ENV: str({
+        default: "development",
+        choices: ["production", "development"],
+    }),
     DB_HOST: str(),
     DB_PORT: port(),
     DB_USERNAME: str(),
@@ -23,7 +29,6 @@ export const env = cleanEnv(process.env, {
     S3_BUCKET_NAME: str(),
     REDIS_PORT: port(),
     REDIS_HOST: str(),
-    OPENAI_API_KEY: str(),
     GEMINI_API_KEY: str(),
 });
 

@@ -1,0 +1,89 @@
+version: "3.8"
+
+services:
+    backend:
+<<<<<<< HEAD
+        container_name: backend-chatPDF
+        build:
+            context: .
+            dockerfile: Dockerfile
+            # args:
+            #     NODE_ENV: prod
+        ports:
+            - "3000:3000"
+        environment:
+            - NODE_ENV: prod
+            - PORT= ${PORT}
+            - DB_HOST= ${DB_HOST}
+            - DB_PORT= ${DB_PORT}
+            - DB_USERNAME= ${DB_USERNAME}
+            - DB_PASSWORD= ${DB_PASSWORD}
+            - DB_NAME= ${DB_NAME}
+            - JWT_SECRET= ${JWT_SECRET}
+            - JWT_TOKEN_EXPIRY_DAYS= ${JWT_TOKEN_EXPIRY_DAYS}
+            - COOKIE_MAXAGE_DAYS= ${COOKIE_MAXAGE_DAYS}
+            - AWS_ACCESS_KEY_ID= ${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY= ${AWS_SECRET_ACCESS_KEY}
+            - AWS_REGION= ${AWS_REGION}
+            - S3_BUCKET_NAME= ${S3_BUCKET_NAME}
+            - REDIS_PORT= ${REDIS_PORT}
+            - REDIS_HOST= ${REDIS_HOST}
+            - GEMINI_API_KEY= ${GEMINI_API_KEY}
+=======
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                NODE_ENV: prod
+        ports:
+            - "3000:3000"
+        environment:
+            NODE_ENV: prod
+>>>>>>> 3c764623bf1fd513972ea8d991bb4b65bc2bf404
+        depends_on:
+            - db
+            - redis
+
+    db:
+<<<<<<< HEAD
+        container_name: pgvector-postgres-chatPDF
+=======
+>>>>>>> 3c764623bf1fd513972ea8d991bb4b65bc2bf404
+        image: pgvector/pgvector:pg16
+        ports:
+            - "5432:5432"
+        environment:
+<<<<<<< HEAD
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+        volumes:
+            - vectorpgdata:/var/lib/postgresql/data
+            # - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+
+    redis:
+        image: redis:latest
+        ports:
+            - "6379:6379"
+        volumes:
+            - redis_data:/data
+
+volumes:
+    vectorpgdata:
+    redis_data:
+=======
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: postgres
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+            - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+
+    redis:
+        image: redis:7
+        ports:
+            - "6379:6379"
+
+volumes:
+    pgdata:
+>>>>>>> 3c764623bf1fd513972ea8d991bb4b65bc2bf404

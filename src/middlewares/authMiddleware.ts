@@ -13,7 +13,7 @@ export const isAuthenticated = async (
     res: Response,
     next: NextFunction,
 ) => {
-    const token = req.cookies["chat-with-pdf"];
+    const token = req.cookies.chatPDF;
 
     if (!token) {
         return next(createHttpError(401, "Authentication token is missing"));

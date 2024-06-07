@@ -7,7 +7,6 @@ import {
 import { AppDataSource } from "../config/data-source";
 import { User } from "../entity/User";
 import createHttpError from "http-errors";
-import logger from "../config/logger";
 import bcrypt from "bcryptjs";
 import { validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
@@ -21,11 +20,7 @@ export const register = async (
     next: NextFunction,
 ) => {
     try {
-        // express validation initization
         const result = validationResult(req);
-
-        /* Checking that is there is any error in express
-                     validation array while validating the req.body data */
         if (!result.isEmpty()) {
             return res.status(400).json({
                 errors: result.array(),
@@ -33,12 +28,6 @@ export const register = async (
         }
 
         const { name, email, password } = req.body;
-
-        logger.info("New request to register a user", {
-            name,
-            email,
-            password: "*****",
-        });
 
         const isUserExits = await userRepository.findOne({ where: { email } });
         if (isUserExits) {
@@ -57,17 +46,14 @@ export const register = async (
         });
         await userRepository.save(user);
 
-        logger.info("User has been registered", { id: user.id });
-
         // const token = jwt.sign(user.id,env.JWT_SECRET)
         const token = jwt.sign({ id: String(user.id) }, env.JWT_SECRET, {
             expiresIn: env.JWT_TOKEN_EXPIRY_DAYS,
         });
 
-        res.cookie("chat-with-pdf", token, {
+        res.cookie("chatPDF", token, {
             maxAge: env.COOKIE_MAXAGE_DAYS * 24 * 60 * 60 * 1000,
             httpOnly: true,
-            secure: process.env.NODE_ENV === "prod", // Use secure cookies in production
         });
 
         res.status(201).json({
@@ -85,11 +71,7 @@ export const login = async (
     next: NextFunction,
 ) => {
     try {
-        // express validation initization
         const result = validationResult(req);
-
-        /* Checking that is there is any error in express
-                     validation array while validating the req.body data */
         if (!result.isEmpty()) {
             return res.status(400).json({
                 errors: result.array(),
@@ -97,11 +79,6 @@ export const login = async (
         }
 
         const { email, password } = req.body;
-
-        logger.info("New request to login a user", {
-            email,
-            password: "*****",
-        });
 
         const isUserExits = await userRepository.findOne({ where: { email } });
         if (!isUserExits) {
@@ -129,16 +106,13 @@ export const login = async (
             expiresIn: env.JWT_TOKEN_EXPIRY_DAYS,
         });
 
-        res.cookie("chat-with-pdf", token, {
+        res.cookie("chatPDF", token, {
             maxAge: env.COOKIE_MAXAGE_DAYS * 24 * 60 * 60 * 1000,
             httpOnly: true,
-            secure: process.env.NODE_ENV === "prod", // Use secure cookies in production
         });
 
-        logger.info("User has been logged in", { id: isUserExits.id });
-
         res.status(200).json({
-            message: "You are logged in in your account",
+            message: "You are loggedIn in your account",
             id: isUserExits.id,
         });
     } catch (error) {
@@ -147,7 +121,7 @@ export const login = async (
 };
 
 export const logout = (req: AuthRequest, res: Response) => {
-    res.clearCookie("chat-with-pdf");
+    res.clearCookie("chatPDF");
     res.status(200).json({
         message: "You are logout",
     });
